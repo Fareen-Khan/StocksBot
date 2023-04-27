@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder  } = require('discord.js');
 const fetch = require('node-fetch');
-const { yhFinanceId, yhFinanceHost } = require('./config.json');
+const { yhFinanceId, yhFinanceHost } = require('../config.json');
 
 
 module.exports = {
@@ -13,11 +13,10 @@ module.exports = {
         .setDescription("Enter the Shortform Stock Name")
     ),
 	
-    async execute(interaction) {
+  async execute(interaction) {
     const stockName = interaction.options.getString("name");
     const stockEmbed = new EmbedBuilder();
     //Finance API to get stock price
-    const url = `https://yh-finance-complete.p.rapidapi.com/yhprice?ticker=${stockName}`;
     const options = {
       method: 'GET',
       headers: {
@@ -27,16 +26,17 @@ module.exports = {
       }
     };
     try {
+      const url = `https://yh-finance-complete.p.rapidapi.com/yhprice?ticker=${stockName}`;
       const response = await fetch(url, options);
       const result = await response.json();
-      console.log(result.price + result.currency);
       stockEmbed
         .setColor(0xB24BF3)
-        .setTitle(`${stockName}`)
+        .setTitle(`${stockName.toUpperCase()}`)
         .addFields(
-          {name:"**Price** ", value:`${result.price}`},
-          {name:"**Currency**", value:`${result.currency}`},
+          {name:"**Price** ", value:`${result.price.toString().toUpperCase()} ${result.currency}`},
         )
+        .setFooter({text:"StocksBot", iconURL:"https://i.imgur.com/Wb7DFBi.png"})
+        .setTimestamp()
         await interaction.deferReply();
         await interaction.editReply({embeds:[stockEmbed]});
     } catch (error) {
