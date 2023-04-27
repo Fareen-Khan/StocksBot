@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder  } = require('discord.js');
 const fetch = require('node-fetch');
 const { yhFinanceId, yhFinanceHost } = require('../config.json');
 
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('price')
@@ -29,11 +28,24 @@ module.exports = {
       const url = `https://yh-finance-complete.p.rapidapi.com/yhprice?ticker=${stockName}`;
       const response = await fetch(url, options);
       const result = await response.json();
+      if(result.price === undefined || result === undefined){
+        stockEmbed
+        .setColor(0xB24BF3)
+        .setTitle(`${stockName.toUpperCase()}`)
+        .addFields(
+          {name:"**Warning**", value:`This stock does not exist`},
+        )
+        .setFooter({text:"StocksBot", iconURL:"https://i.imgur.com/Wb7DFBi.png"})
+        .setTimestamp()
+        await interaction.deferReply();
+        await interaction.editReply({embeds:[stockEmbed]});
+      }
+
       stockEmbed
         .setColor(0xB24BF3)
         .setTitle(`${stockName.toUpperCase()}`)
         .addFields(
-          {name:"**Price** ", value:`${result.price.toString().toUpperCase()} ${result.currency}`},
+          {name:"**Price**", value:`${result.price} ${result.currency}`},
         )
         .setFooter({text:"StocksBot", iconURL:"https://i.imgur.com/Wb7DFBi.png"})
         .setTimestamp()

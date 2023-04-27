@@ -43,8 +43,8 @@ module.exports={
         .setColor(0xB24BF3)
         .setTitle("Conversion")
         .addFields(
-          {name:"**Original** ", value:`${val} ${from.toUpperCase()}`, inline:true},
-          {name:"**Converted** ", value:`${result.result} ${to.toUpperCase()}`, inline:true}
+          {name:"**Original**", value:`${val} ${from.toUpperCase()}`, inline:true},
+          {name:"**Converted**", value:`${result.result} ${to.toUpperCase()}`, inline:true}
         )
         .setFooter({text:"StocksBot", iconURL:"https://i.imgur.com/Wb7DFBi.png"})
         .setTimestamp()
