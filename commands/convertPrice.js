@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder  } = require('discord.js');
 const fetch = require('node-fetch');
-const { yhFinanceId, yhFinanceHost } = require('../config.json');
+const { RapidId, DataHost } = require('../config.json');
 
 module.exports={
   data:new SlashCommandBuilder()
@@ -31,20 +31,21 @@ module.exports={
         method: 'GET',
         headers: {
           'content-type': 'application/octet-stream',
-          'X-RapidAPI-Key': yhFinanceId,
-          'X-RapidAPI-Host': yhFinanceHost
+          'X-RapidAPI-Key': RapidId,
+          'X-RapidAPI-Host': DataHost
         }
       };
       try {
-        const url = `https://yh-finance-complete.p.rapidapi.com/convert?from=${from}&to=${to}&amount=${val}`;
+        const url = `https://twelve-data1.p.rapidapi.com/currency_conversion?symbol=${from}%2F${to}&amount=${val}`;
         const response = await fetch(url, options);
         const result = await response.json();
         stockEmbed
         .setColor(0xB24BF3)
         .setTitle("Conversion")
         .addFields(
-          {name:"**Original**", value:`${val} ${from.toUpperCase()}`, inline:true},
-          {name:"**Converted**", value:`${result.result} ${to.toUpperCase()}`, inline:true}
+          {name:`**Original (${from.toUpperCase()}**)`, value:`${val.toFixed(2)}`, inline:true},
+          {name:`**Converted (${to.toUpperCase()})**`, value:`${result.amount.toFixed(2)} `, inline:true},
+          {name:"**Rate**", value:`${result.rate.toFixed(2)}`, inline:true}
         )
         .setFooter({text:"StocksBot", iconURL:"https://i.imgur.com/Wb7DFBi.png"})
         .setTimestamp()

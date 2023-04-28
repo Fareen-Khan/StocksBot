@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder  } = require('discord.js');
 const fetch = require('node-fetch');
-const { yhFinanceId, yhFinanceHost } = require('../config.json');
+const { RapidId, DataHost } = require('../config.json');
 
 module.exports = {
   data:new SlashCommandBuilder()
@@ -14,13 +14,13 @@ module.exports = {
 
   async execute(interaction){
     const val = interaction.options.getString("value");
-    const url = `https://yh-finance-complete.p.rapidapi.com/summarydetails?symbol=${val}`;
+    const url = `https://twelve-data1.p.rapidapi.com/quote?symbol=${val}&interval=1day&outputsize=30&format=json`;
     const options = {
       method: 'GET',
       headers: {
         'content-type': 'application/octet-stream',
-        'X-RapidAPI-Key': yhFinanceId,
-        'X-RapidAPI-Host': yhFinanceHost
+        'X-RapidAPI-Key': RapidId,
+        'X-RapidAPI-Host': DataHost
       }
     };
     const response = await fetch(url, options);
@@ -29,14 +29,14 @@ module.exports = {
       const result = await response.json();
       stockEmbed
       .setColor(0xB24BF3)
-      .setTitle(`${val.toUpperCase()} Summary (${result.summary.summaryDetail.currency})`)
+      .setTitle(`${val.toUpperCase()} Summary (${result.currency})`)
       .setURL(`https://ca.finance.yahoo.com/quote/TSLA?p=${val}`)
       .addFields(
-        {name:"**Open**", value:`${result.summary.summaryDetail.open}`, inline:true},
-        {name:"**Close**", value:`${result.summary.summaryDetail.previousClose}`, inline:true},
-        { name: '\n', value: '\n' },
-        {name:"**Day Low**", value:`${result.summary.summaryDetail.dayLow}`, inline:true},
-        {name:"**Day High**", value:`${result.summary.summaryDetail.dayHigh}`, inline:true},
+        {name:"**Open**", value:`${parseFloat(result.open).toFixed(2)}`, inline:true},
+        {name:"**Previous Close**", value:`${parseFloat(result.previous_close).toFixed(2)}`, inline:true},
+        {name: '\n', value: '\n' },
+        {name:"**Day Low**", value:`${parseFloat(result.low).toFixed(2)}`, inline:true},
+        {name:"**Day High**", value:`${parseFloat(result.high).toFixed(2)}`, inline:true},
       )
       .setFooter({text:"StocksBot", iconURL:"https://i.imgur.com/Wb7DFBi.png"})
       .setTimestamp()
