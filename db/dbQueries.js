@@ -1,19 +1,19 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient()
 
-async function create(serverID, name, link, userID){
+async function create(serverID, name, userID){
   try{
     await prisma.DiscordTable.create({
       data:{
         name: name,
         server_id: serverID,
         author_id: userID,
-        link: link,
       },
     })
-    return {staus:true}
+    return {status:true}
   } catch(error){
     console.error(error);
+    return{status:false, message:"Error Occured"}
   }
 }
 
@@ -30,18 +30,16 @@ async function readAllData(serverID){
   }
 }
 
-async function readUniqueData(serverID, name){
+async function readUniqueData(authorID){
   try{
-    const uniqueData = await prisma.DiscordTable.findUnique({
+    const uniqueData = await prisma.DiscordTable.findMany({
       where:{
-        UniqueNameIdentifier: {
-          server_id: serverID,
-          name:name,
-        }
+        author_id:authorID
       },
     })
     if(uniqueData != null){
-      return uniqueData.link;
+      console.log(uniqueData);
+      return uniqueData;
     } 
     return false;
   }catch(error){
@@ -49,51 +47,12 @@ async function readUniqueData(serverID, name){
   }
 }
 
-async function updateDataName(serverID, name, newName){
-  try{
-    await prisma.DiscordTable.update({
-      where:{
-        UniqueNameIdentifier: {
-          server_id: serverID,
-          name:name,
-        }
-      },
-      data:{
-        name:newName
-      }
-      })
-    }catch(error){
-    console.error(error);
-  }
-}
-
-async function updateDataLink(serverID, name, newLink){
-  try{
-    await prisma.DiscordTable.update({
-      where:{
-        UniqueNameIdentifier: {
-          server_id: serverID,
-          name:name,
-        }
-      },
-      data:{
-        link:newLink
-      }
-      })
-    }catch(error){
-    console.error(error);
-  }
-}
-
-//Add Delete CRUD commands
-
-// TODO: check to make sure function only deletes one entry in table
-async function deleteUniqueData(serverID, name){
+async function deleteUniqueData(authorID, name){
   try{
     await prisma.DiscordTable.delete({
       where:{
         UniqueNameIdentifier: {
-          server_id: serverID,
+          author_id:authorID,
           name:name,
         }
       }
@@ -115,4 +74,4 @@ async function deleteAll(serverID){
   }
 }
 
-module.exports = {create, deleteUniqueData, readAllData, readUniqueData, updateDataLink, updateDataName, deleteAll};
+module.exports = {create, deleteUniqueData, readAllData, readUniqueData, deleteAll};

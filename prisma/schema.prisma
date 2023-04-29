@@ -11,9 +11,6 @@ generator client {
 model DiscordTable {
   id        Int     @id @default(autoincrement())
   name      String  
-  link      String  @db.VarChar(577)
   author_id String
   server_id String  
-  @@unique([name, server_id], name: "UniqueNameIdentifier")
-  @@unique([link, server_id], name: "UniqueLinkIdentifier")
 }
