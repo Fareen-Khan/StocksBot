@@ -15,6 +15,7 @@ module.exports = {
   async execute(interaction) {
     const stockName = interaction.options.getString("name");
     const stockEmbed = new EmbedBuilder();
+    var companyLogo;
     //Finance API to get stock price
     const options = {
       method: 'GET',
@@ -54,9 +55,20 @@ module.exports = {
         }
       }
 
+      try{
+        const url = `https://twelve-data1.p.rapidapi.com/logo?symbol=${stockName}`;
+        const response = await fetch(url, options);
+        const result = await response.json();
+        companyLogo = result.url;
+      }catch (error){
+        console.error(error);
+      }
+
       stockEmbed
         .setColor(0xB24BF3)
         .setTitle(`${stockName.toUpperCase()}`)
+        .setURL(`https://finance.yahoo.com/quote/${stockName}`)
+        .setThumbnail(`${companyLogo}`)
         .addFields(
           {name:"**Price**", value:`${parseFloat(result.price).toFixed(2)}`},
         )

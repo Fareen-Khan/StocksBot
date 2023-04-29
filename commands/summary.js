@@ -27,10 +27,20 @@ module.exports = {
     try {
       const stockEmbed = new EmbedBuilder();
       const result = await response.json();
+      var companyLogo;
+      try{
+        const url = `https://twelve-data1.p.rapidapi.com/logo?symbol=${val}`;
+        const response = await fetch(url, options);
+        const result = await response.json();
+        companyLogo = result.url;
+      }catch (error){
+        console.error(error);
+      }
       stockEmbed
       .setColor(0xB24BF3)
       .setTitle(`${val.toUpperCase()} Summary (${result.currency})`)
-      .setURL(`https://ca.finance.yahoo.com/quote/TSLA?p=${val}`)
+      .setURL(`https://finance.yahoo.com/quote/${val}`)
+      .setThumbnail(`${companyLogo}`)
       .addFields(
         {name:"**Open**", value:`${parseFloat(result.open).toFixed(2)}`, inline:true},
         {name:"**Previous Close**", value:`${parseFloat(result.previous_close).toFixed(2)}`, inline:true},
