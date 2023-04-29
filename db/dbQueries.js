@@ -38,7 +38,7 @@ async function readUniqueData(authorID){
       },
     })
     if(uniqueData != null){
-      console.log(uniqueData);
+      console.log("in db commands: "+uniqueData);
       return uniqueData;
     } 
     return false;
