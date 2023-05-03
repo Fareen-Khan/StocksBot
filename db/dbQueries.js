@@ -49,12 +49,10 @@ async function readUniqueData(authorID){
 
 async function deleteUniqueData(authorID, name){
   try{
-    await prisma.DiscordTable.delete({
+    await prisma.DiscordTable.deleteMany({
       where:{
-        UniqueNameIdentifier: {
-          author_id:authorID,
-          name:name,
-        }
+        author_id:{contains: authorID},
+        name:{contains: name},
       }
     })
   }catch(error){
